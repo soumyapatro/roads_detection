@@ -1,0 +1,6 @@
+data/
+datasets/
+.ipynb_checkpoints/
+.DS_Store
+cnn_models/__pycache__/
+cnn_models/.ipynb_checkpoints/
