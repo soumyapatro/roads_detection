@@ -1,6 +1,6 @@
 import numpy as np
 from keras import layers
-from keras.layers import Input, Add, Dense, Activation, ZeroPadding2D, BatchNormalization, Flatten, Conv2D, AveragePooling2D, MaxPooling2D, GlobalMaxPooling2D
+from keras.layers import Input, Add, Dense, Activation, ZeroPadding2D, BatchNormalization, Flatten, Conv2D, AveragePooling2D, MaxPooling2D, GlobalMaxPooling2D, Dropout
 from keras.models import Model, load_model
 from keras.preprocessing import image
 from keras.utils import layer_utils
@@ -30,36 +30,44 @@ def alexnet(input_shape = (256,256,3), labels = 2):
     I = Conv2D(filters=96, kernel_size=(11,11), strides=(4,4), padding='valid', use_bias=True,
                kernel_initializer=glorot_normal(seed=1), bias_initializer='zeros', name = 'conv1' )(I_input)
     I = Activation('relu')(I)
+    I = BatchNormalization(axis = 3, name = 'bn_conv1')(I)
     I = MaxPooling2D((3, 3), strides=(2, 2))(I)
     
     #Stage 2
     I = Conv2D(filters=256, kernel_size=(5,5), strides=(1,1), padding='same', use_bias=True,
                kernel_initializer=glorot_normal(seed=1), bias_initializer='zeros', name = 'conv2' )(I)
     I = Activation('relu')(I)
+    I = BatchNormalization(axis = 3, name = 'bn_conv2')(I)
     I = MaxPooling2D((3, 3), strides=(2, 2))(I)
     
     #Stage 3
     I = Conv2D(filters=384, kernel_size=(3,3), strides=(1,1), padding='same', use_bias=True,
-               kernel_initializer=glorot_normal(seed=1), bias_initializer='zeros', name = 'conv3' )(I)
+               kernel_initializer=glorot_normal(seed=0), bias_initializer='zeros', name = 'conv3' )(I)
+    I = BatchNormalization(axis = 3, name = 'bn_conv3')(I)
     I = Activation('relu')(I)
     
     #Stage 4
     I = Conv2D(filters=384, kernel_size=(3,3), strides=(1,1), padding='same', use_bias=True,
-               kernel_initializer=glorot_normal(seed=1), bias_initializer='zeros', name = 'conv4' )(I)
+               kernel_initializer=glorot_normal(seed=0), bias_initializer='zeros', name = 'conv4' )(I)
+    I = BatchNormalization(axis = 3, name = 'bn_conv4')(I)
     I = Activation('relu')(I)
+    
     
     #Stage 5
     I = Conv2D(filters=256, kernel_size=(3,3), strides=(1,1), padding='same', use_bias=True,
-               kernel_initializer=glorot_normal(seed=1), bias_initializer='zeros', name = 'conv5' )(I)
+               kernel_initializer=glorot_normal(seed=0), bias_initializer='zeros', name = 'conv5' )(I)
+    I = BatchNormalization(axis = 3, name = 'bn_conv5')(I)
     I = Activation('relu')(I)
     I = MaxPooling2D((3, 3), strides=(2, 2))(I)
     
     
     #Flatten & Fully Connected layers
     I = Flatten()(I)
-    I = Dense(units=4096, name='fc1', activation= 'relu', kernel_initializer = glorot_normal(seed=1))(I)
-    I = Dense(units=4096, name='fc2', activation= 'relu', kernel_initializer = glorot_normal(seed=1))(I)
-    I = Dense(labels, name='fc3' + str(labels), kernel_initializer = glorot_normal(seed=1))(I)
+    I = Dense(units=4096, name='fc1', activation= 'relu', kernel_initializer = glorot_normal(seed=0))(I)
+    I = Dropout(0.5)(I)
+    I = Dense(units=4096, name='fc2', activation= 'relu', kernel_initializer = glorot_normal(seed=0))(I)
+    I = Dropout(0.5)(I)
+    I = Dense(labels, name='fc3' + str(labels), kernel_initializer = glorot_normal(seed=0))(I)
     I = Activation('sigmoid')(I)
     
     model = Model(inputs = I_input, outputs = I, name='AlexNet')
