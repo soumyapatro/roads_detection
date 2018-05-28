@@ -4,3 +4,4 @@ datasets/
 .DS_Store
 cnn_models/__pycache__/
 cnn_models/.ipynb_checkpoints/
+__pycache__/
