@@ -7,11 +7,9 @@ from keras.preprocessing import image
 from keras.utils import layer_utils
 from keras.utils.data_utils import get_file
 from keras.applications.imagenet_utils import preprocess_input
-#import pydot
 from IPython.display import SVG
 from keras.utils.vis_utils import model_to_dot
 from keras.utils import plot_model
-#from resnets_utils import *
 from keras.initializers import glorot_uniform, glorot_normal
 import scipy.misc
 from matplotlib.pyplot import imshow
@@ -125,7 +123,7 @@ def convolutional_block(X, f, filters, stage, block, s = 2):
     return X
 
 # Rename function to ResNet 15
-def ResNet10(input_shape = (64, 64, 3)):
+def ResNet14(input_shape = (64, 64, 3)):
     """
     Implementation of the popular ResNet50 with the following simpler architecture:
     CONV2D -> BATCHNORM -> RELU -> MAXPOOL -> CONVBLOCK -> IDBLOCK*2 -> AVGPOOL -> FC1 -> FC2 -> FC3 -> OUTPUT
@@ -173,6 +171,6 @@ def ResNet10(input_shape = (64, 64, 3)):
     X = Activation('sigmoid')(X)
    
     # Create model
-    model = Model(inputs = X_input, outputs = X, name='ResNet10')
+    model = Model(inputs = X_input, outputs = X, name='ResNet14')
 
     return model
